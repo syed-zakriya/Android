@@ -1,2 +1,2 @@
 # Android
-MY Android Projects
+All Android related samples are available here
