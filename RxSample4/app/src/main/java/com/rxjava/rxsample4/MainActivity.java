@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
 
     Observable<Integer> mObservable2 = null;//To Handle Integer type arrray
 
+    Observable<Integer> mObservable3 = null; //To demonstrate usage of range(m,n) operator
+
     String[] array = {"Item1","Item2","Item3","Item4","Item5"};
     Integer[] intArray = {10,20,30,40,50};
     TextView resText = null;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         resText = findViewById(R.id.resText);
         mObservable1 = Observable.fromArray(array);//This will create an observable using an iterable. i.e it wlll emit strings one at a time. Hence, the observable should be of type String and not String[]
         mObservable2 = Observable.fromArray(intArray);
+        mObservable3 = Observable.range(1,10);
 
         mCompositeDisposable = new CompositeDisposable();
 
@@ -51,6 +54,14 @@ public class MainActivity extends AppCompatActivity {
         //Adding Integer Observer to subscribe to mObservable2
         mCompositeDisposable.add(
                 mObservable2
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(getIntegerObserver())
+        );
+
+        //Demonstrating usage of range(m,n) operator
+        mCompositeDisposable.add(
+                mObservable3
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(getIntegerObserver())
@@ -72,9 +83,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onComplete() {
-                resText.append("\nString Observable OnComplete\n");
+                resText.append("\nString Observer OnComplete\n");
                 resText.append("---------------------\n");
-                Log.d(TAG,"OnComplete");
+                Log.d(TAG,"OnComplete String Observer");
             }
         };
     }
@@ -94,8 +105,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onComplete() {
-                resText.append("\nInteger Observable OnComplete\n");
+                resText.append("\nInteger Observer OnComplete\n");
                 resText.append("---------------------\n\n");
+                Log.d(TAG,"onComplete Integer Observer");
             }
         };
     }
